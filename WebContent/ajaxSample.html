@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ajax test</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			// 출력
+			$.ajax({
+				url:"empList.jsp?action=select",
+				success: function(result){ // 페이지가 로딩되고 나면
+					console.log(result);
+					console.log('타입 : ' + typeof result); // String
+					
+					var datas = JSON.parse(result);
+					console.log(datas); // 이렇게하면 object 타입으로 바뀜
+					console.log('타입 : ' + typeof datas); // object
+					
+					var $tag = "<ul>";
+					$.map(datas, function(r){
+						$tag += "<li>" + r.firstName + "</li>";
+					})
+					$tag += "</ul>";
+					$("#show").append($tag);
+				},
+				error: function() {
+					console.log("error occured");
+				}
+			});
+			
+			// 입력 처리
+			$("#submit").on("click", function(){
+				$.ajax({
+					url:"empList.jsp",
+					data:{ // url을 호출할 때 넘겨울 parameter
+						firstName:$("[name='firstName']").val(),
+						lastName:$("[name='lastName']").val(),
+						email:$("[name='email']").val(),
+						hireDate:$("[name='hireDate']").val(),
+						jobId:$("[name='jobId']").val(),
+						salary:$("[name='salary']").val(),
+						action:$("#frm1").attr("action") // frm1의 action속성의 속성값을 넘기겠다
+						
+						// ☆☆☆ 입력하면, 리스트에 입력한 값 출력 (db 연결말고 )
+					},
+					success: function(result){
+						console.log(result);
+					},
+					error: function(result){
+						console.log(result);
+					}
+				});
+			})
+			
+		});
+	</script>
+</head>
+<body>
+	<form id = "frm1" action = "insert">
+		firstName : <input type = "text" name = "firstName"><br>
+		lastName : <input type = "text" name = "lastName"><br>
+		email : <input type = "text" name = "email"><br>
+		hireDate : <input type = "text" name = "hireDate"><br>
+		jobId : <input type = "text" name = "jobId"><br>
+		salary : <input type = "text" name = "salary"><br>
+		<input type = "button" id = "submit" value = "OK"><br>
+	</form>
+	<div id = "show"></div>
+</body>
+</html>
